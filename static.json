@@ -1,0 +1,10 @@
+{
+  "logging": {
+    "access": false
+  },
+  "root": "build/",
+  "routes": {
+    "/**": "index.html"
+  },
+  "https_only": true
+}

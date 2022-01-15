@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  webpack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      PORT: 5000 # matches the exposed port
+    volumes:
+      - .:/app
+      - node_cache:/app/node_modules
+    command: sh -c "yarn install --network-timeout 1000000 --frozen-lockfile && yarn run start"
+    ports:
+      - '5000:5000'
+
+volumes:
+  node_cache:
