@@ -5,12 +5,30 @@ import darkScrollbar from '@mui/material/darkScrollbar'
 let theme = createTheme({
   palette: {
     // mode: 'dark',
+    // type: 'light',
     primary: {
-      main: '#0052cc',
+      main: '#6c4233',
     },
-    // secondary: {
-    //   main: '#edf2ff',
-    // },
+    secondary: {
+      main: '#3A9E52',
+    },
+    background: {
+      default: '#fff2eb',
+    },
+  },
+  typography: {
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
   },
 })
 
@@ -18,7 +36,9 @@ theme = createTheme(theme, {
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        body: theme.palette.mode === 'dark' ? darkScrollbar() : null,
+        body: {
+          ...(theme.palette.mode === 'dark' ? darkScrollbar() : {}),
+        },
       },
     },
   },

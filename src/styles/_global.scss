@@ -2,10 +2,12 @@ html,
 body,
 #root {
   height: 100%;
+  --test: rgb(108, 66, 51);
 }
 
 body {
   min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 *,
