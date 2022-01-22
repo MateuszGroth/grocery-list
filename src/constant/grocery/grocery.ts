@@ -1,6 +1,6 @@
 import { green, amber, teal, blue, deepPurple, deepOrange, pink, blueGrey } from '@mui/material/colors'
 
-import { Category, CategoryKey, Product } from 'types'
+import { Category, CategoryKey, Product, Unit } from 'types'
 
 const SHADE = 500
 const LIGHT_SHADE = 300
@@ -9,46 +9,55 @@ export const CATEGORIES: Record<CategoryKey, Category> = {
   vegetable: {
     label: 'Warzywo',
     color: green[SHADE],
+    darkModeColor: green[LIGHT_SHADE],
     key: 'vegetable',
   },
   fruit: {
     label: 'Owoc',
     color: amber[SHADE],
+    darkModeColor: amber[LIGHT_SHADE],
     key: 'fruit',
   },
   nabial: {
     label: 'Nabiał',
     color: teal[SHADE],
+    darkModeColor: teal[LIGHT_SHADE],
     key: 'nabial',
   },
   meat: {
     label: 'Mięso',
     color: teal[LIGHT_SHADE],
+    darkModeColor: teal[LIGHT_SHADE],
     key: 'meat',
   },
   frozen: {
     label: 'Mrozonki',
     color: blue[SHADE],
+    darkModeColor: blue[LIGHT_SHADE],
     key: 'frozen',
   },
   bathroom: {
     label: 'Do Łazienki',
     color: deepPurple[SHADE],
+    darkModeColor: deepPurple[LIGHT_SHADE],
     key: 'bathroom',
   },
   spices: {
     label: 'Przyprawy',
     color: deepOrange[SHADE],
+    darkModeColor: deepOrange[LIGHT_SHADE],
     key: 'spices',
   },
   sweets: {
     label: 'Słodycze',
     color: pink[SHADE],
+    darkModeColor: pink[LIGHT_SHADE],
     key: 'sweets',
   },
   random: {
     label: 'Rózne',
     color: blueGrey[SHADE],
+    darkModeColor: blueGrey[LIGHT_SHADE],
     key: 'random',
   },
 }
@@ -129,3 +138,9 @@ export const PRODUCTS: Product[] = [
   ...SWEETS.map((label) => ({ category: 'sweets', label })),
   ...RANDOM.map((label) => ({ category: 'random', label })),
 ].sort((a, b) => a.label.localeCompare(b.label))
+
+export const UNIT: Record<string, Unit> = {
+  KG: 'kg',
+  SZT: 'szt',
+  L: 'L',
+}

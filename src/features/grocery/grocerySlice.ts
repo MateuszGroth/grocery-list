@@ -4,8 +4,17 @@ import type { RootState } from 'store'
 
 import type { GroceryItem, GroceryState } from 'types'
 
-const initialState: GroceryState = {
+let initialState: GroceryState = {
   list: [],
+}
+
+try {
+  const groceryStoredState = localStorage.getItem('grocery')
+  if (groceryStoredState) {
+    initialState = JSON.parse(groceryStoredState as string) as GroceryState
+  }
+} catch (e) {
+  localStorage.setItem('grocery', '')
 }
 
 export const grocerySlice = createSlice({
@@ -23,7 +32,7 @@ export const grocerySlice = createSlice({
   },
 })
 
-export const { addItem } = grocerySlice.actions
+export const { addItem, removeItem } = grocerySlice.actions
 
 export const selectGroceryItems = (state: RootState) => state.grocery.list
 

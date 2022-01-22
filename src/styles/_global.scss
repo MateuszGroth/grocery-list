@@ -2,7 +2,7 @@ html,
 body,
 #root {
   height: 100%;
-  --test: rgb(108, 66, 51);
+  --test: #678d6f;
 }
 
 body {
@@ -34,4 +34,33 @@ dd {
 ul[role='list'],
 ol[role='list'] {
   list-style: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.dot {
+  position: relative;
+  display: inline;
+  &::after {
+    content: '';
+    position: absolute;
+
+    top: 50%;
+    width: 5px;
+    height: 5px;
+
+    background: currentColor;
+
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
 }
