@@ -8,6 +8,7 @@ function App() {
   return (
     <div className={styles.app}>
       <Routes>
+        <Route path="/" element={<MainPage />} />
         <Route path="*" element={<MainPage />} />
       </Routes>
     </div>
