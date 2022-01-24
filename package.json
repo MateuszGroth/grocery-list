@@ -99,7 +99,7 @@
     "prettier": "prettier -c .",
     "prepare": "husky install",
     "postinstall": "husky install",
-    "predeploy": "npm run build",
+    "predeploy": "yarn build; cd ./build; rm 404.html; cp index.html 404.html",
     "deploy": "gh-pages -d build"
   },
   "browserslist": {
