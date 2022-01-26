@@ -24,15 +24,29 @@ export const grocerySlice = createSlice({
   reducers: {
     addItem: (state, action: PayloadAction<GroceryItem & { id?: string }>) => {
       const newGroceryItem = { ...action.payload, id: uuidv4() }
-      state.list = [...state.list, newGroceryItem]
+      state.list = [newGroceryItem, ...state.list]
     },
     removeItem: (state, action: PayloadAction<{ id: string }>) => {
       state.list = state.list.filter(({ id }) => id !== action.payload.id)
     },
+    editItem: (state, action: PayloadAction<{ id: string; itemChanges: Partial<GroceryItem> }>) => {
+      if (!action.payload.itemChanges) {
+        return
+      }
+      const item = state.list.find(({ id }) => id === action.payload.id)
+      if (!item) {
+        console.log('Invalid item id')
+        return
+      }
+
+      const itemIndex = state.list.indexOf(item)
+      const editedItem = { ...item, ...action.payload.itemChanges }
+      state.list = [...state.list.slice(0, itemIndex), editedItem, ...state.list.slice(itemIndex + 1)]
+    },
   },
 })
 
-export const { addItem, removeItem } = grocerySlice.actions
+export const { addItem, removeItem, editItem } = grocerySlice.actions
 
 export const selectGroceryItems = (state: RootState) => state.grocery.list
 
