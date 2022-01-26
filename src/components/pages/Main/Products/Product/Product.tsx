@@ -20,7 +20,7 @@ type ProductProps = {
   onMoreClick(event?: any, item?: GroceryItem): void
 }
 const Product = ({ item, isSelected, onProductClick, onMoreClick }: ProductProps) => {
-  const handleProductClick = (item: GroceryItem) => {
+  const handleProductClick = () => {
     if (!item?.id) {
       return
     }
@@ -37,7 +37,7 @@ const Product = ({ item, isSelected, onProductClick, onMoreClick }: ProductProps
           </IconButton>
         }
       >
-        <ListItemButton onClick={() => handleProductClick(item)} selected={isSelected}>
+        <ListItemButton onClick={handleProductClick} selected={isSelected}>
           <ListItemAvatar>
             <Avatar
               sx={{
