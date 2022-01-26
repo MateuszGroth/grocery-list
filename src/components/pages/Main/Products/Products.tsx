@@ -90,7 +90,7 @@ const Products = ({ items }: ProductsProps) => {
             <Box
               display="flex"
               alignItems={'center'}
-              sx={{ color: 'text.secondary', gap: 1, pt: 2, pb: { xs: 2, md: 3 } }}
+              sx={{ color: 'text.secondary', gap: 1, pt: 2, pb: { xs: 2, md: 3 }, pl: 2 }}
             >
               <ProductionQuantityLimitsIcon color="inherit" fontSize="large" />
               <Typography variant="h6">Nie masz zadnych produktów</Typography>
