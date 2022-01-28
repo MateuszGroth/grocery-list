@@ -32,7 +32,7 @@
       "types/*": ["src/types/*"],
       "types": ["src/types/index.d.ts"],
       "utils/*": ["src/utils/*"],
-      "utils": ["src/utils/index.ts"],
+      "utils": ["src/utils/index.tsx"],
       "enums/*": ["src/enums/*"],
       "enums": ["src/enums/index.ts"],
       "store/*": ["src/store/*"],

@@ -6,6 +6,7 @@ import type { GroceryItem, GroceryState } from 'types'
 
 let initialState: GroceryState = {
   list: [],
+  isGrouping: false,
 }
 
 try {
@@ -22,12 +23,33 @@ export const grocerySlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    setIsGrouping: (state, action: PayloadAction<boolean>) => {
+      state.isGrouping = action.payload
+    },
     addItem: (state, action: PayloadAction<GroceryItem & { id?: string }>) => {
       const newGroceryItem = { ...action.payload, id: uuidv4() }
-      state.list = [newGroceryItem, ...state.list]
+      const existingGroceryItem = state.list.find(
+        (item) =>
+          item.category === newGroceryItem.category &&
+          item.product === newGroceryItem.product &&
+          item.unit === newGroceryItem.unit,
+      )
+
+      if (!existingGroceryItem) {
+        state.list = [newGroceryItem, ...state.list]
+        return
+      }
+      const updatedExistingItem = { ...existingGroceryItem, amount: existingGroceryItem.amount + newGroceryItem.amount }
+      state.list = [updatedExistingItem, ...state.list.filter((item) => item !== existingGroceryItem)]
+    },
+    removeAll: (state) => {
+      state.list = []
     },
     removeItem: (state, action: PayloadAction<{ id: string }>) => {
       state.list = state.list.filter(({ id }) => id !== action.payload.id)
+    },
+    removeItems: (state, action: PayloadAction<{ idList: string[] }>) => {
+      state.list = state.list.filter(({ id }) => !action.payload.idList.includes(id as string))
     },
     editItem: (state, action: PayloadAction<{ id: string; itemChanges: Partial<GroceryItem> }>) => {
       if (!action.payload.itemChanges) {
@@ -46,8 +68,9 @@ export const grocerySlice = createSlice({
   },
 })
 
-export const { addItem, removeItem, editItem } = grocerySlice.actions
+export const { addItem, removeItem, editItem, removeItems, removeAll, setIsGrouping } = grocerySlice.actions
 
 export const selectGroceryItems = (state: RootState) => state.grocery.list
+export const selectIsGrouping = (state: RootState) => state.grocery.isGrouping
 
 export default grocerySlice.reducer

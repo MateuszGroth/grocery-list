@@ -1,64 +1,92 @@
-import { green, amber, teal, blue, deepPurple, deepOrange, pink, blueGrey } from '@mui/material/colors'
+import { red, green, teal, blue, deepPurple, deepOrange, pink, blueGrey, brown } from '@mui/material/colors'
+import AcUnitIcon from '@mui/icons-material/AcUnit'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import BathtubIcon from '@mui/icons-material/Bathtub'
+import CookieIcon from '@mui/icons-material/Cookie'
+import AppleIcon from '@mui/icons-material/Apple'
+import { Meat, Vegetable, Pepper, Cheese } from 'components/icons'
 
 import { Category, CategoryKey, Product, Unit } from 'types'
 
 const SHADE = 500
-const LIGHT_SHADE = 300
+const ICON_SHADE = 'A400'
+const DARK_MODE_SHADE = '200'
+const DARK_MODE_ICON_SHADE = '900'
+
+const getColorCallbacks = (
+  color: Record<any, any>,
+): { getColor(themeMode: 'light' | 'dark'): string; getIconColor(themeMode: 'light' | 'dark'): string } => {
+  return {
+    getColor: (themeMode) => {
+      if (themeMode === 'dark') {
+        return color[DARK_MODE_SHADE]
+      }
+      return color[SHADE]
+    },
+    getIconColor: (themeMode) => {
+      if (themeMode === 'dark') {
+        return color[DARK_MODE_ICON_SHADE]
+      }
+
+      return color[ICON_SHADE]
+    },
+  }
+}
 
 export const CATEGORIES: Record<CategoryKey, Category> = {
   vegetable: {
     label: 'Warzywo',
-    color: green[SHADE],
-    darkModeColor: green[LIGHT_SHADE],
     key: 'vegetable',
+    Icon: Vegetable,
+    ...getColorCallbacks(green),
   },
   fruit: {
     label: 'Owoc',
-    color: amber[SHADE],
-    darkModeColor: amber[LIGHT_SHADE],
     key: 'fruit',
+    Icon: AppleIcon,
+    ...getColorCallbacks(red),
   },
   nabial: {
     label: 'Nabiał',
-    color: teal[SHADE],
-    darkModeColor: teal[LIGHT_SHADE],
     key: 'nabial',
+    Icon: Cheese,
+    ...getColorCallbacks(teal),
   },
   meat: {
     label: 'Mięso',
-    color: teal[LIGHT_SHADE],
-    darkModeColor: teal[LIGHT_SHADE],
     key: 'meat',
+    Icon: Meat,
+    ...getColorCallbacks(brown),
   },
   frozen: {
     label: 'Mrozonki',
-    color: blue[SHADE],
-    darkModeColor: blue[LIGHT_SHADE],
     key: 'frozen',
+    Icon: AcUnitIcon,
+    ...getColorCallbacks(blue),
   },
   bathroom: {
     label: 'Do Łazienki',
-    color: deepPurple[SHADE],
-    darkModeColor: deepPurple[LIGHT_SHADE],
     key: 'bathroom',
+    Icon: BathtubIcon,
+    ...getColorCallbacks(deepPurple),
   },
   spices: {
     label: 'Przyprawy',
-    color: deepOrange[SHADE],
-    darkModeColor: deepOrange[LIGHT_SHADE],
     key: 'spices',
+    Icon: Pepper,
+    ...getColorCallbacks(deepOrange),
   },
   sweets: {
     label: 'Słodycze',
-    color: pink[SHADE],
-    darkModeColor: pink[LIGHT_SHADE],
     key: 'sweets',
+    Icon: CookieIcon,
+    ...getColorCallbacks(pink),
   },
   random: {
     label: 'Rózne',
-    color: blueGrey[SHADE],
-    darkModeColor: blueGrey[LIGHT_SHADE],
     key: 'random',
+    Icon: AutoAwesomeIcon,
+    ...getColorCallbacks(blueGrey),
   },
 }
 
@@ -141,6 +169,13 @@ export const PRODUCTS: Product[] = [
 
 export const UNIT: Record<string, Unit> = {
   KG: 'kg',
-  SZT: 'szt',
+  SZT: 'szt.',
   L: 'L',
+}
+
+export const PRODUCT_ACTION = {
+  DELETE: 'delete',
+  DELETE_SELECTED: 'deleteSelected',
+  DELETE_ALL: 'deleteAll',
+  COMMENT: 'comment',
 }

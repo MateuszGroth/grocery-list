@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits'
-import List from '@mui/material/List'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import AddCommentIcon from '@mui/icons-material/AddComment'
-import Divider from '@mui/material/Divider'
-import DeleteIcon from '@mui/icons-material/Delete'
-import Collapse from '@mui/material/Collapse'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
-import { TransitionGroup } from 'react-transition-group'
+import IconButton from '@mui/material/IconButton'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
 
-import { useAppDispatch } from 'hooks'
-import { removeItem, editItem } from 'features'
+import { useDialog } from 'utils'
+import { useAppDispatch, useAppSelector } from 'hooks'
+import { removeItem, editItem, removeAll, removeItems, selectIsGrouping, setIsGrouping } from 'features'
+import { PRODUCT_ACTION } from 'constant'
+
 import AddComment from '../AddComment/AddComment'
-import Product from './Product/Product'
+import { ProductList, GroupedProductList } from './ProductList'
+import AddProduct from '../AddProduct/AddProduct'
+
+import { AllMenu, ProductMenu } from './Menu'
 
 import type { GroceryItem } from 'types'
 
@@ -25,29 +24,28 @@ type ProductsProps = {
   items: GroceryItem[]
 }
 
-const ACTION = {
-  DELETE: 'delete',
-  COMMENT: 'comment',
-}
+// todo w all menu dodac ustawioenia, a tam w dialogu grupowanie po kategoriach
 
 const Products = ({ items }: ProductsProps) => {
+  const { showCustomDialog } = useDialog()
   const dispatch = useAppDispatch()
+  const isGrouping = useAppSelector(selectIsGrouping)
   const [selected, setSelected] = useState<Array<string>>([])
   const [targettedItem, setTargettedItem] = useState<GroceryItem | null>()
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [productAnchorEl, setProductAnchorEl] = useState(null)
+  const [allAnchorEl, setAllAnchorEl] = useState(null)
   const [isAddingComment, setIsAddingComment] = useState(false)
-  const open = Boolean(anchorEl)
 
   useEffect(() => {
     setSelected((prevSelected) => {
       return prevSelected.filter((id) => items.some((item) => item?.id === id))
     })
+    setTargettedItem(null)
   }, [items])
 
   const handleSelect = (id: string) => {
     setSelected((prevSelected) => {
-      const newSelectedSet = new Set([...prevSelected, id])
-      return [...newSelectedSet]
+      return [...prevSelected, id]
     })
   }
   const handleUnselect = (id: string) => {
@@ -56,30 +54,66 @@ const Products = ({ items }: ProductsProps) => {
     })
   }
 
-  const handleClick = (id: string, isSelected: boolean) => {
-    ;(isSelected ? handleUnselect : handleSelect)(id)
+  const handleProductClick = (id: string) => {
+    const callback = selected.includes(id) ? handleUnselect : handleSelect
+    callback(id)
   }
 
   const handleMoreClick = (event: any, item: GroceryItem) => {
     setTargettedItem(item)
-    setAnchorEl(event?.currentTarget)
+    setProductAnchorEl(event?.currentTarget)
   }
 
-  const handleMoreClose = (action: any) => {
+  const handleAllMoreClick = (event: any) => {
+    setAllAnchorEl(event?.currentTarget)
+  }
+
+  const handleMenuClose = (action: any) => {
     switch (action) {
-      case ACTION.DELETE: {
+      case PRODUCT_ACTION.DELETE: {
         dispatch(removeItem({ id: targettedItem?.id || '' }))
         setTargettedItem(null)
         break
       }
-      case ACTION.COMMENT: {
+      case PRODUCT_ACTION.COMMENT: {
         setIsAddingComment(true)
         break
       }
       default:
         break
     }
-    setAnchorEl(null)
+    setProductAnchorEl(null)
+  }
+  const handleAllMenuClose = (action: any) => {
+    switch (action) {
+      case PRODUCT_ACTION.DELETE_ALL: {
+        showCustomDialog({
+          title: 'Potwierdź Usunięcie Produktów',
+          content: `Czy na pewno chcesz usunąć wszystkie produkty z listy?`,
+          onApply: () => {
+            dispatch(removeAll())
+          },
+          applyActionLabel: 'Usuń',
+        })
+
+        break
+      }
+      case PRODUCT_ACTION.DELETE_SELECTED: {
+        showCustomDialog({
+          title: 'Potwierdź Usunięcie Produktów',
+          content: `Czy na pewno chcesz usunąć wszystkie zaznaczone produkty z listy?`,
+          onApply: () => {
+            dispatch(removeItems({ idList: selected }))
+          },
+          applyActionLabel: 'Usuń',
+        })
+
+        break
+      }
+      default:
+        break
+    }
+    setAllAnchorEl(null)
   }
 
   const handleAddCommentCancel = () => {
@@ -88,7 +122,6 @@ const Products = ({ items }: ProductsProps) => {
 
   const handleCommentApply = (comment: string) => {
     setIsAddingComment(false)
-    console.log(comment)
     dispatch(
       editItem({
         id: targettedItem?.id as string,
@@ -97,74 +130,67 @@ const Products = ({ items }: ProductsProps) => {
         },
       }),
     )
+    setTargettedItem(null)
   }
 
   return (
     <>
-      <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} sx={{ p: 2 }}>
-        <Typography variant="h5">Twoje produkty</Typography>
-        <Typography variant="body2" component="div" sx={{ display: 'inline' }} color={'textSecondary'}>
+      <AddProduct />
+      <Stack direction="row" justifyContent="space-between" alignItems={'center'} sx={{ minHeight: '4rem', px: 2 }}>
+        <Typography variant="h6">Twoje Produkty</Typography>
+        <IconButton
+          edge="end"
+          sx={{ p: 1 }}
+          disabled={!items.length}
+          aria-label="more"
+          title="more"
+          onClick={(ev) => handleAllMoreClick(ev)}
+        >
+          <MoreHorizIcon />
+        </IconButton>
+      </Stack>
+      {isGrouping ? (
+        <GroupedProductList
+          items={items}
+          selected={selected}
+          handleMoreClick={handleMoreClick}
+          handleProductClick={handleProductClick}
+          targettedItem={targettedItem}
+        />
+      ) : (
+        <ProductList
+          items={items}
+          selected={selected}
+          handleMoreClick={handleMoreClick}
+          handleProductClick={handleProductClick}
+          targettedItem={targettedItem}
+        />
+      )}
+
+      <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} sx={{ p: 2 }}>
+        <FormControlLabel
+          onChange={() => {
+            dispatch(setIsGrouping(!isGrouping))
+          }}
+          checked={isGrouping}
+          control={<Switch />}
+          label="Grupowanie"
+        />
+        <Typography variant="body2" component="div" color={'textSecondary'}>
           Zaznaczono{' '}
           <Typography sx={{ display: 'inline' }} variant="body1" color={selected.length ? 'primary' : 'textSecondary'}>
             {selected.length}
           </Typography>
           /{items.length}
         </Typography>
-      </Stack>
-      <Divider></Divider>
-      <List sx={{ width: '100%', height: '100%', overflow: 'auto' }} disablePadding>
-        <TransitionGroup>
-          {items.map((item) => {
-            const isSelected =
-              item?.id != null && (selected.includes(item?.id as string) || targettedItem?.id === item?.id)
-
-            return (
-              <Collapse key={item.id}>
-                <Product
-                  isSelected={isSelected}
-                  onProductClick={handleClick}
-                  item={item}
-                  onMoreClick={handleMoreClick}
-                />
-              </Collapse>
-            )
-          })}
-          {!items.length && (
-            <Collapse key={'no-items'}>
-              <Box
-                display="flex"
-                alignItems={'center'}
-                sx={{ color: 'text.secondary', gap: 1, pt: 2, pb: { xs: 2, md: 3 }, pl: 2 }}
-              >
-                <ProductionQuantityLimitsIcon color="inherit" fontSize="large" />
-                <Typography variant="h6">Nie masz zadnych produktów</Typography>
-              </Box>
-            </Collapse>
-          )}
-        </TransitionGroup>
-      </List>
-      <Menu
-        id="product-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMoreClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={() => handleMoreClose(ACTION.COMMENT)}>
-          <ListItemIcon>
-            <AddCommentIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Skomentuj</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={() => handleMoreClose(ACTION.DELETE)}>
-          <ListItemIcon>
-            <DeleteIcon sx={{ color: 'coral' }} fontSize="small" />
-          </ListItemIcon>
-          <ListItemText sx={{ color: 'coral' }}>Usuń</ListItemText>
-        </MenuItem>
-      </Menu>
+      </Box>
+      <ProductMenu onClose={handleMenuClose} open={Boolean(productAnchorEl)} anchorEl={productAnchorEl} />
+      <AllMenu
+        onClose={handleAllMenuClose}
+        open={Boolean(allAnchorEl)}
+        anchorEl={allAnchorEl}
+        hasSelected={!!selected.length}
+      />
       <AddComment
         open={isAddingComment}
         onCancel={handleAddCommentCancel}

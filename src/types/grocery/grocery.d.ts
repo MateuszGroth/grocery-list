@@ -1,5 +1,8 @@
+import { FunctionComponent } from 'react'
+
 export interface GroceryState {
   list: Array<GroceryItem>
+  isGrouping: boolean
 }
 
 export type CategoryKey =
@@ -16,9 +19,10 @@ export type CategoryKey =
 
 export type Category = {
   label: string
-  color: string
-  darkModeColor: string
   key: CategoryKey
+  Icon?: FunctionComponent<any>
+  getColor(themeMode: 'dark' | 'light'): string
+  getIconColor(themeMode: 'dark' | 'light'): string
 }
 
 export type Product = {
@@ -26,7 +30,7 @@ export type Product = {
   category: CategoryKey | string
 }
 
-export type Unit = 'szt' | 'kg' | 'L'
+export type Unit = 'szt.' | 'kg' | 'L'
 export interface GroceryItem {
   product: string
   unit: Unit

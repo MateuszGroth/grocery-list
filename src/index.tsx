@@ -6,6 +6,7 @@ import App from 'components/app/App/App'
 import ThemeProvider from 'components/app/ThemeProvider/ThemeProvider'
 import { store } from 'store'
 import { Provider } from 'react-redux'
+import { onServiceWorkerUpdate } from 'helpers'
 import * as serviceWorker from './serviceWorker'
 
 import './index.scss'
@@ -29,9 +30,7 @@ ReactDOM.render(
 
 if (process.env.NODE_ENV === 'production') {
   const config = {
-    onUpdate: () => {
-      alert('Updated content')
-    },
+    onUpdate: onServiceWorkerUpdate,
   }
   serviceWorker.register(config)
 } else {

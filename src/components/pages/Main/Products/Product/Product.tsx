@@ -1,4 +1,4 @@
-import Box from '@mui/material/Box'
+import { FunctionComponent, useMemo } from 'react'
 import Typography from '@mui/material/Typography'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
@@ -7,16 +7,15 @@ import ListItemAvatar from '@mui/material/ListItemAvatar'
 import IconButton from '@mui/material/IconButton'
 import Avatar from '@mui/material/Avatar'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
-import Tooltip from '@mui/material/Tooltip'
 
-import { CATEGORIES } from 'constant'
+import { CATEGORIES, UNIT } from 'constant'
 
 import type { CategoryKey, GroceryItem } from 'types'
 
 type ProductProps = {
   item: GroceryItem
   isSelected: boolean
-  onProductClick(id?: string, isSelected?: boolean): void
+  onProductClick(id?: string): void
   onMoreClick(event?: any, item?: GroceryItem): void
 }
 const Product = ({ item, isSelected, onProductClick, onMoreClick }: ProductProps) => {
@@ -25,8 +24,12 @@ const Product = ({ item, isSelected, onProductClick, onMoreClick }: ProductProps
       return
     }
 
-    onProductClick(item?.id as string, isSelected)
+    onProductClick(item?.id as string)
   }
+  const Icon = useMemo<FunctionComponent<any> | undefined>(
+    () => CATEGORIES?.[item.category as CategoryKey]?.Icon,
+    [item],
+  )
   return (
     <>
       <ListItem
@@ -36,42 +39,42 @@ const Product = ({ item, isSelected, onProductClick, onMoreClick }: ProductProps
             <MoreHorizIcon />
           </IconButton>
         }
+        alignItems={item?.comment ? 'flex-start' : 'center'}
       >
         <ListItemButton onClick={handleProductClick} selected={isSelected}>
           <ListItemAvatar>
             <Avatar
               sx={{
                 bgcolor: (theme) => {
-                  const color: string =
-                    theme.palette.mode === 'dark'
-                      ? CATEGORIES?.[item.category as CategoryKey]?.darkModeColor
-                      : CATEGORIES?.[item.category as CategoryKey]?.color
+                  const color: string = CATEGORIES?.[item.category as CategoryKey]?.getColor(theme.palette.mode)
 
                   return color || 'secondary.main'
                 },
+                color: (theme) =>
+                  CATEGORIES?.[item.category as CategoryKey]?.getIconColor(theme.palette.mode) || 'text.primary',
               }}
             >
-              {item.amount}
+              {Icon ? <Icon /> : item.amount}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
+            sx={{ pr: 2 }}
             primary={
               <>
                 <Typography sx={{ display: 'inline' }} component="span" color="textPrimary">
-                  {item.product}
+                  {item.amount} {item.unit !== UNIT.SZT && item.unit} <strong>{item.product}</strong>
                 </Typography>
-                {item?.comment ? (
-                  <>
-                    <Box sx={{ color: 'text.secondary', ml: '10px', mr: '15px' }} className="dot"></Box>
-                    <Typography sx={{ display: 'inline' }} component="span" variant="body1" color="textSecondary">
-                      Komentarz -
-                      <Tooltip placement="top" title={item?.comment || ''}>
-                        <span>{item?.comment}</span>
-                      </Tooltip>
-                    </Typography>
-                  </>
-                ) : null}
               </>
+            }
+            secondary={
+              item?.comment ? (
+                <>
+                  <Typography sx={{ display: 'inline' }} component="span" variant="body2" color="text.primary">
+                    Komentarz{' '}
+                  </Typography>
+                  - {item?.comment}
+                </>
+              ) : undefined
             }
           />
         </ListItemButton>

@@ -1,0 +1,38 @@
+::-webkit-scrollbar {
+  width: var(--scrl-s);
+  height: var(--scrl-s);
+  cursor: pointer;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  // background: var(--scrl-thmb-bg);
+  // border: 1px solid var(--scrl-bg);
+  border-radius: 16px;
+}
+// ::-webkit-scrollbar-thumb:hover {
+//     background: var(--scrl-thmb-hover-bg);
+// }
+// ::-webkit-scrollbar-thumb:active {
+//     background: var(--scrl-thmb-active-bg);
+// }
+::-webkit-scrollbar-track {
+  // background: var(--scrl-bg);
+  border-radius: 16px;
+}
+// ::-webkit-scrollbar-track:active {
+//     background: var(--scrl-active-bg);
+// }
+// ::-webkit-scrollbar-corner {
+//     background: transparent;
+// }
+
+// target firefox only
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: thin;
+    // scrollbar-color: var(--moz-scrl-bg);
+  }
+}
