@@ -18,6 +18,8 @@ try {
   localStorage.setItem('grocery', '')
 }
 
+initialState.isEdited = false
+
 export const grocerySlice = createSlice({
   name: 'grocery',
   initialState,
@@ -25,6 +27,9 @@ export const grocerySlice = createSlice({
   reducers: {
     setIsGrouping: (state, action: PayloadAction<boolean>) => {
       state.isGrouping = action.payload
+    },
+    setIsEdited: (state, action: PayloadAction<boolean>) => {
+      state.isEdited = action.payload
     },
     addItem: (state, action: PayloadAction<GroceryItem & { id?: string }>) => {
       const newGroceryItem = { ...action.payload, id: uuidv4() }
@@ -68,9 +73,22 @@ export const grocerySlice = createSlice({
   },
 })
 
-export const { addItem, removeItem, editItem, removeItems, removeAll, setIsGrouping } = grocerySlice.actions
+export const { addItem, removeItem, editItem, removeItems, removeAll, setIsGrouping, setIsEdited } =
+  grocerySlice.actions
+export const grocerySliceMiddleware = (store: any) => (next: any) => (action: any) => {
+  if (
+    ['grocery/addItem', 'grocery/removeItem', 'grocery/editItem', 'grocery/removeItems', 'grocery/removeAll'].includes(
+      action.type,
+    )
+  ) {
+    store.getState().grocery.isEdited || store.dispatch(setIsEdited(true))
+  }
+
+  return next(action)
+}
 
 export const selectGroceryItems = (state: RootState) => state.grocery.list
 export const selectIsGrouping = (state: RootState) => state.grocery.isGrouping
+export const selectIsEdited = (state: RootState) => state.grocery.isEdited
 
 export default grocerySlice.reducer

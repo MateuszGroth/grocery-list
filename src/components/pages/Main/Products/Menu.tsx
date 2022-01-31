@@ -5,6 +5,7 @@ import AddCommentIcon from '@mui/icons-material/AddComment'
 import DeleteIcon from '@mui/icons-material/Delete'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
+import EditIcon from '@mui/icons-material/Edit'
 import ListItemText from '@mui/material/ListItemText'
 
 import { PRODUCT_ACTION } from 'constant'
@@ -26,6 +27,12 @@ export const ProductMenu = ({ anchorEl, open, onClose }: MenuProps) => {
         'aria-labelledby': 'basic-button',
       }}
     >
+      <MenuItem onClick={() => onClose(PRODUCT_ACTION.EDIT)}>
+        <ListItemIcon>
+          <EditIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Edytuj</ListItemText>
+      </MenuItem>
       <MenuItem onClick={() => onClose(PRODUCT_ACTION.COMMENT)}>
         <ListItemIcon>
           <AddCommentIcon fontSize="small" />

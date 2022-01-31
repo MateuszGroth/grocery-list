@@ -3,6 +3,7 @@ import { FunctionComponent } from 'react'
 export interface GroceryState {
   list: Array<GroceryItem>
   isGrouping: boolean
+  isEdited?: boolean
 }
 
 export type CategoryKey =

@@ -1,29 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 import { styled } from '@mui/material/styles'
-// import useMediaQuery from '@mui/material/useMediaQuery'
-import Collapse from '@mui/material/Collapse'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
 import ButtonGroup from '@mui/material/ButtonGroup'
-import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 import Chip from '@mui/material/Chip'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack'
-import Box from '@mui/material/Box'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import { IconButton } from '@mui/material'
 
-import { useAppDispatch } from 'hooks'
-import { addItem } from 'features'
 import { CATEGORIES, UNIT } from 'constant'
-
-import ProductsSelect from '../ProductsSelect/ProductsSelect'
-
-import type { CategoryKey, Product, Category, Unit } from 'types'
+import type { CategoryKey, Category, Unit, GroceryItem } from 'types'
 
 const categoriesList = Object.values(CATEGORIES)
 
@@ -33,15 +26,26 @@ const DEFAULT_AMOUNT = 1
 const DEFAULT_UNIT = UNIT.SZT
 const DEFAULT_CATEGORY = CATEGORIES.random
 
-const AddProduct = () => {
-  // const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
-  const dispatch = useAppDispatch()
+type EditProductProps = {
+  open: boolean
+  editedItem: GroceryItem | null
+  onCancel(): void
+  onApply(editedItemData: Partial<GroceryItem>): void
+}
+const EditProduct = ({ open, editedItem, onCancel, onApply }: EditProductProps) => {
   const [amount, setAmount] = useState<number>(DEFAULT_AMOUNT)
   const [unit, setUnit] = useState<Unit>(DEFAULT_UNIT)
-  const [product, setProduct] = useState<Product | null>(null)
   const [category, setCategory] = useState<Category | null>(DEFAULT_CATEGORY)
-  const [customProduct, setCustomProduct] = useState('')
-  const [isCollapsed, setIsCollapsed] = useState(true)
+
+  useEffect(() => {
+    if (editedItem == null) {
+      return
+    }
+
+    setAmount(+editedItem.amount)
+    setUnit(editedItem.unit)
+    setCategory(CATEGORIES[editedItem.category as CategoryKey] || DEFAULT_CATEGORY)
+  }, [editedItem])
 
   const handleAddAmount = () => {
     setAmount((prev) => +prev + 1)
@@ -55,15 +59,6 @@ const AddProduct = () => {
       }
       return newValue
     })
-  }
-
-  const handleProductChange = (event: any, value: Product) => {
-    setProduct(value)
-    if (value == null) {
-      setCategory(null)
-    } else {
-      setCategory(CATEGORIES[value?.category as CategoryKey])
-    }
   }
 
   const handleCategoryChange = (event: any) => {
@@ -88,60 +83,30 @@ const AddProduct = () => {
     setUnit(event.target.value)
   }
 
-  const handleReset = () => {
-    setAmount(DEFAULT_AMOUNT)
-    setUnit(DEFAULT_UNIT)
-    setProduct(null)
-    setCategory(CATEGORIES.random)
-    setCustomProduct('')
+  const handleClose = () => {
+    onCancel()
+  }
+  const handleEditProduct = () => {
+    onApply({
+      amount,
+      unit,
+      category: category?.key as string,
+    })
   }
 
-  const handleAdd = () => {
-    dispatch(
-      addItem({
-        amount,
-        unit,
-        product: product?.label || (customProduct as string),
-        category: category?.key as string,
-      }),
-    )
-    handleReset()
-  }
-
-  const handleInputChange = (newValue: string) => {
-    setProduct(null)
-    setCustomProduct(newValue)
-  }
-
-  const isValid = !!amount && (!!product || customProduct) && !!category
-  const isTouched =
-    !!product || !!customProduct || amount !== DEFAULT_AMOUNT || unit !== DEFAULT_UNIT || category !== DEFAULT_CATEGORY
+  const isValid = !!amount && !!category
+  const isTouched = amount !== editedItem?.amount || unit !== editedItem?.unit || category?.key !== editedItem?.category
 
   return (
-    <Box
-      sx={{
-        borderRadius: { xs: 1, md: 2 },
-        p: 2,
-      }}
-      elevation={1}
-      component={Paper}
-    >
-      <Stack spacing={3} direction={'row'}>
-        <Button disabled={!isValid} onClick={handleAdd} variant="contained" startIcon={<AddIcon />}>
-          Dodaj
-        </Button>
-        <Button disabled={!isTouched} onClick={handleReset}>
-          Zresetuj
-        </Button>
-        <Box flex={1} textAlign={'end'}>
-          <IconButton sx={{ alignSelf: 'end' }} onClick={() => setIsCollapsed((prev) => !prev)}>
-            {isCollapsed ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-          </IconButton>
-        </Box>
-      </Stack>
-      <Collapse in={!isCollapsed}>
-        <Grid container columns={7} spacing={1} sx={{ pt: 2 }}>
-          <Grid item xs={2} md={1} sx={{ display: 'flex', order: { xs: 0, md: 1 } }}>
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Edytuj Produkt</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Zmień ilość, jednostkę lub kategorię produktu{' '}
+          {editedItem?.product ? <strong>{editedItem?.product}</strong> : null}
+        </DialogContentText>
+        <Grid container columns={7} spacing={2} sx={{ pt: 2 }}>
+          <Grid item xs={3} md={2} sx={{ display: 'flex', order: { xs: 0, md: 1 } }}>
             <ButtonGroup
               sx={{ border: (theme) => `1px solid ${theme.palette.grey[700]}` }}
               orientation="vertical"
@@ -172,7 +137,7 @@ const AddProduct = () => {
             </ButtonGroup>
             <StyledTextField type="text" fullWidth value={amount} onChange={handleAmountChange} />
           </Grid>
-          <Grid item xs={2} md={1} sx={{ order: { xs: 0, md: 1 } }}>
+          <Grid item xs={4} md={2} sx={{ order: { xs: 0, md: 1 } }}>
             <StyledTextField select fullWidth value={unit} onChange={handleUnitChange}>
               {Object.values(UNIT).map((value) => (
                 <MenuItem key={value} value={value}>
@@ -181,16 +146,7 @@ const AddProduct = () => {
               ))}
             </StyledTextField>
           </Grid>
-          <Grid item xs={7} md={3} sx={{ order: { xs: 1, md: 1 } }}>
-            <ProductsSelect
-              inputValue={customProduct}
-              onInputChange={handleInputChange}
-              value={product}
-              onChange={handleProductChange}
-              category={category}
-            />
-          </Grid>
-          <Grid item xs={3} md={2} sx={{ order: { xs: 0, md: 1 } }}>
+          <Grid item xs={7} md={3} sx={{ order: { xs: 0, md: 1 } }}>
             <StyledTextField
               select
               fullWidth
@@ -219,9 +175,15 @@ const AddProduct = () => {
             </StyledTextField>
           </Grid>
         </Grid>
-      </Collapse>
-    </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Zamknij</Button>
+        <Button disabled={!isValid || !isTouched} onClick={handleEditProduct}>
+          Potwierdź
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
-export default AddProduct
+export default EditProduct

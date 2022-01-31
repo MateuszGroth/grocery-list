@@ -120,7 +120,6 @@ export const GroupedProductList = ({
             </li>
           )
         })}
-
         {!items.length && (
           <Box
             display="flex"

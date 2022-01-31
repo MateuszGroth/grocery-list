@@ -1,6 +1,6 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import counterReducer from 'features/counter/counterSlice'
-import groceryReducer from 'features/grocery/grocerySlice'
+import groceryReducer, { grocerySliceMiddleware } from 'features/grocery/grocerySlice'
 import { authSliceReducer, authSliceMiddleware } from 'features'
 
 export const store = configureStore({
@@ -9,7 +9,7 @@ export const store = configureStore({
     auth: authSliceReducer,
     grocery: groceryReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authSliceMiddleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authSliceMiddleware, grocerySliceMiddleware),
 })
 
 export type AppDispatch = typeof store.dispatch

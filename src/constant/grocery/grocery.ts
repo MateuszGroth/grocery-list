@@ -35,13 +35,13 @@ const getColorCallbacks = (
 
 export const CATEGORIES: Record<CategoryKey, Category> = {
   vegetable: {
-    label: 'Warzywo',
+    label: 'Warzywa',
     key: 'vegetable',
     Icon: Vegetable,
     ...getColorCallbacks(green),
   },
   fruit: {
-    label: 'Owoc',
+    label: 'Owoce',
     key: 'fruit',
     Icon: AppleIcon,
     ...getColorCallbacks(red),
@@ -59,13 +59,13 @@ export const CATEGORIES: Record<CategoryKey, Category> = {
     ...getColorCallbacks(brown),
   },
   frozen: {
-    label: 'Mrozonki',
+    label: 'Mrożonki',
     key: 'frozen',
     Icon: AcUnitIcon,
     ...getColorCallbacks(blue),
   },
   bathroom: {
-    label: 'Do Łazienki',
+    label: 'Łazienka',
     key: 'bathroom',
     Icon: BathtubIcon,
     ...getColorCallbacks(deepPurple),
@@ -90,7 +90,19 @@ export const CATEGORIES: Record<CategoryKey, Category> = {
   },
 }
 
-const FRUITS = ['Cytryna', 'Grejfrut', 'Jabłko', 'Kiwi', 'Banan', 'Gruszka', 'Pomarańcza', 'Arbuz', 'Mango', 'Avocado']
+const FRUITS = [
+  'Cytryna',
+  'Grejfrut',
+  'Jabłko',
+  'Kiwi',
+  'Banan',
+  'Gruszka',
+  'Pomarańcza',
+  'Arbuz',
+  'Mango',
+  'Avocado',
+  'Mandarynka',
+]
 const VEGETABLES = [
   'Brokuł',
   'Papryka',
@@ -106,21 +118,39 @@ const VEGETABLES = [
   'Seler',
   'Cebula',
   'Sałata',
+  'Por',
+  'Buraki',
+  'Kapusta Czerwona',
 ]
-const NABIAL = ['Mleko Owsiane', 'Mleko', 'Jajka', 'Ser', 'Ser Sałatkowy', 'Bakuś', 'Jogurt Naturalny', 'Śmietana']
-const MEAT = ['Kurczak Pierś', 'Skrzydełka', 'Na Rosół', 'Mielone', 'Indyk', 'Wędlina']
-const FROZEN = ['Warzywa mrozone', 'Lody']
+const NABIAL = [
+  'Mleko Owsiane',
+  'Mleko',
+  'Jajka',
+  'Ser',
+  'Ser Sałatkowy',
+  'Bakuś',
+  'Jogurt Naturalny',
+  'Śmietana',
+  'Masło',
+  'Ser Feta',
+  'Ser Grillowany',
+  'Drożdże',
+]
+const MEAT = ['Kurczak Pierś', 'Skrzydełka', 'Kurczak na Rosół', 'Mielone', 'Indyk', 'Wędlina', 'Kurczak Trymowany']
+const FROZEN = ['Warzywa mrozone', 'Lody', 'Pizza', 'Marchewka z Groszkiem']
 const BATHROOM = [
   'Papier',
   'Źel pod prysznic',
   'Chusteczki',
   'Papier wilgotny',
-  'Podpaski',
   'Pasta do Zębów',
-  'Krem',
+  'Krem nawilżający',
   'Szampon',
+  'Proszek do Prania',
+  'Tabletki do Zmywarki',
+  'Szczoteczka do Zębów',
 ]
-const SPICES = ['Słodka papryka', 'Chili', 'Do Kurczaka', 'Majeranek', 'Oregano', 'Cynamon']
+const SPICES = ['Słodka papryka', 'Chili', 'Do Kurczaka', 'Majeranek', 'Oregano', 'Cynamon', 'Kostka rosołowa']
 const SWEETS = [
   'Źelki',
   'Kinder Delice',
@@ -147,6 +177,7 @@ const RANDOM = [
   'Na Kebaba',
   'Mleko kokosowe',
   'Sos do Spaghetti',
+  'Sos do kurczka',
   'Mąka',
   'Makaron',
   'Płatki do mleka',
@@ -156,15 +187,15 @@ const RANDOM = [
 ]
 
 export const PRODUCTS: Product[] = [
-  ...FRUITS.map((label) => ({ category: 'fruit', label })),
-  ...VEGETABLES.map((label) => ({ category: 'vegetable', label })),
-  ...NABIAL.map((label) => ({ category: 'nabial', label })),
-  ...MEAT.map((label) => ({ category: 'meat', label })),
-  ...FROZEN.map((label) => ({ category: 'frozen', label })),
-  ...BATHROOM.map((label) => ({ category: 'bathroom', label })),
-  ...SPICES.map((label) => ({ category: 'spices', label })),
-  ...SWEETS.map((label) => ({ category: 'sweets', label })),
-  ...RANDOM.map((label) => ({ category: 'random', label })),
+  ...[...new Set(FRUITS)].map((label) => ({ category: 'fruit', label })),
+  ...[...new Set(VEGETABLES)].map((label) => ({ category: 'vegetable', label })),
+  ...[...new Set(NABIAL)].map((label) => ({ category: 'nabial', label })),
+  ...[...new Set(MEAT)].map((label) => ({ category: 'meat', label })),
+  ...[...new Set(FROZEN)].map((label) => ({ category: 'frozen', label })),
+  ...[...new Set(BATHROOM)].map((label) => ({ category: 'bathroom', label })),
+  ...[...new Set(SPICES)].map((label) => ({ category: 'spices', label })),
+  ...[...new Set(SWEETS)].map((label) => ({ category: 'sweets', label })),
+  ...[...new Set(RANDOM)].map((label) => ({ category: 'random', label })),
 ].sort((a, b) => a.label.localeCompare(b.label))
 
 export const UNIT: Record<string, Unit> = {
@@ -178,4 +209,5 @@ export const PRODUCT_ACTION = {
   DELETE_SELECTED: 'deleteSelected',
   DELETE_ALL: 'deleteAll',
   COMMENT: 'comment',
+  EDIT: 'edit',
 }

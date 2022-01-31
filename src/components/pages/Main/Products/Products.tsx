@@ -5,14 +5,27 @@ import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import SaveIcon from '@mui/icons-material/Save'
 import Switch from '@mui/material/Switch'
+import Zoom from '@mui/material/Zoom'
 
 import { useDialog } from 'utils'
 import { useAppDispatch, useAppSelector } from 'hooks'
-import { removeItem, editItem, removeAll, removeItems, selectIsGrouping, setIsGrouping } from 'features'
+import {
+  removeItem,
+  editItem,
+  removeAll,
+  removeItems,
+  selectIsGrouping,
+  setIsGrouping,
+  selectIsEdited,
+  setIsEdited,
+  selectGroceryItems,
+} from 'features'
 import { PRODUCT_ACTION } from 'constant'
 
 import AddComment from '../AddComment/AddComment'
+import EditProduct from '../EditProduct/EditProduct'
 import { ProductList, GroupedProductList } from './ProductList'
 import AddProduct from '../AddProduct/AddProduct'
 
@@ -21,20 +34,25 @@ import { AllMenu, ProductMenu } from './Menu'
 import type { GroceryItem } from 'types'
 
 type ProductsProps = {
-  items: GroceryItem[]
+  onSave(): void
 }
 
 // todo w all menu dodac ustawioenia, a tam w dialogu grupowanie po kategoriach
 
-const Products = ({ items }: ProductsProps) => {
+const Products = ({ onSave }: ProductsProps) => {
   const { showCustomDialog } = useDialog()
+
   const dispatch = useAppDispatch()
+  const items = useAppSelector(selectGroceryItems)
   const isGrouping = useAppSelector(selectIsGrouping)
+  const isEdited = useAppSelector(selectIsEdited)
+
   const [selected, setSelected] = useState<Array<string>>([])
   const [targettedItem, setTargettedItem] = useState<GroceryItem | null>()
   const [productAnchorEl, setProductAnchorEl] = useState(null)
   const [allAnchorEl, setAllAnchorEl] = useState(null)
   const [isAddingComment, setIsAddingComment] = useState(false)
+  const [isEditingProduct, setIsEditingProduct] = useState(false)
 
   useEffect(() => {
     setSelected((prevSelected) => {
@@ -79,11 +97,19 @@ const Products = ({ items }: ProductsProps) => {
         setIsAddingComment(true)
         break
       }
-      default:
+      case PRODUCT_ACTION.EDIT: {
+        setIsEditingProduct(true)
         break
+      }
+      default: {
+        setTargettedItem(null)
+        break
+      }
     }
+
     setProductAnchorEl(null)
   }
+
   const handleAllMenuClose = (action: any) => {
     switch (action) {
       case PRODUCT_ACTION.DELETE_ALL: {
@@ -133,11 +159,42 @@ const Products = ({ items }: ProductsProps) => {
     setTargettedItem(null)
   }
 
+  const handleEditProductCancel = () => {
+    setIsEditingProduct(false)
+  }
+
+  const handleEditProductApply = (editedItemData: Partial<GroceryItem>) => {
+    setIsEditingProduct(false)
+    dispatch(
+      editItem({
+        id: targettedItem?.id as string,
+        itemChanges: { ...editedItemData },
+      }),
+    )
+    setTargettedItem(null)
+  }
+
+  const handleSave = () => {
+    dispatch(setIsEdited(false))
+    onSave()
+  }
+
   return (
     <>
       <AddProduct />
       <Stack direction="row" justifyContent="space-between" alignItems={'center'} sx={{ minHeight: '4rem', px: 2 }}>
-        <Typography variant="h6">Twoje Produkty</Typography>
+        <Box display="flex" alignItems={'center'}>
+          <Typography variant="h6">Twoje Produkty</Typography>
+          <Zoom
+            in={isEdited}
+            timeout={{ exit: 500, enter: 300 }}
+            style={{ transitionDelay: !isEdited ? '200ms' : '0ms' }}
+          >
+            <IconButton sx={{ p: 1, ml: 1 }} disabled={!isEdited} aria-label="save" title="save" onClick={handleSave}>
+              <SaveIcon />
+            </IconButton>
+          </Zoom>
+        </Box>
         <IconButton
           edge="end"
           sx={{ p: 1 }}
@@ -196,6 +253,12 @@ const Products = ({ items }: ProductsProps) => {
         onCancel={handleAddCommentCancel}
         onApply={handleCommentApply}
         currentComment={targettedItem?.comment || ''}
+      />
+      <EditProduct
+        open={isEditingProduct}
+        onCancel={handleEditProductCancel}
+        onApply={handleEditProductApply}
+        editedItem={targettedItem as GroceryItem}
       />
     </>
   )
