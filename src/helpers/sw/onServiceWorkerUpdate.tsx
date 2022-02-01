@@ -32,10 +32,6 @@ const UpdateAvailableAlert = ({ rootEl, registration }: TProps) => {
     setOpen(false)
   }
 
-  useEffect(() => {
-    alert('test update 2')
-  }, [])
-
   const handleExited = () => {
     rootEl.remove()
   }
