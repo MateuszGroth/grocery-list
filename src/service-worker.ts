@@ -23,9 +23,13 @@ self.addEventListener('install', (event) => {
 // Use the imported Workbox libraries to implement caching,
 // routing, and other logic:
 
-precacheAndRoute(test)
+precacheAndRoute(test, {
+  // Ignore all URL parameters.
+  ignoreURLParametersMatching: [/.*/],
+})
 
-const handler = createHandlerBoundToURL('/index.html')
+// it is on gh-pages, so instead of /index.html it needs to be /{homepage}/index.html
+const handler = createHandlerBoundToURL('/grocery-list/index.html')
 const navigationRoute = new NavigationRoute(handler)
 
 registerRoute(navigationRoute)
