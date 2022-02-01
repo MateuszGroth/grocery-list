@@ -12,9 +12,18 @@ self.addEventListener('message', (event) => {
   }
 })
 
+const test = self.__WB_MANIFEST
+console.log(test)
+
+// @ts-expect-error: self
+self.addEventListener('install', (event) => {
+  console.log(test)
+})
+
 // Use the imported Workbox libraries to implement caching,
 // routing, and other logic:
-precacheAndRoute(self.__WB_MANIFEST)
+
+precacheAndRoute(test)
 
 const handler = createHandlerBoundToURL('/index.html')
 const navigationRoute = new NavigationRoute(handler)
