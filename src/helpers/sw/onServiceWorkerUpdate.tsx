@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 import Button from '@mui/material/Button'
@@ -31,6 +31,10 @@ const UpdateAvailableAlert = ({ rootEl, registration }: TProps) => {
 
     setOpen(false)
   }
+
+  useEffect(() => {
+    alert('test update 2')
+  }, [])
 
   const handleExited = () => {
     rootEl.remove()
