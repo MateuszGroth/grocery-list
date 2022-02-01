@@ -163,6 +163,7 @@ const SWEETS = [
   'Lizak',
   'Schoco Bonsy',
   'Kinder Bueno',
+  'Kinder Cards',
 ]
 const RANDOM = [
   'Oliwa',
