@@ -54,20 +54,20 @@ const UpdateAvailableAlert = ({ rootEl, registration }: TProps) => {
       ContentProps={{ sx: { bgcolor: 'info.main' } }}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       message={
-        <Box display="flex" gap={2}>
+        <Box display="flex" gap={2} alignItems={'center`'}>
           <SystemUpdateAltIcon />
           <Typography sx={{ pr: 2 }} variant="body1">
-            New version of the Application is available!
+            Dostępna jest nowa wersja aplikacji
           </Typography>
         </Box>
       }
       action={
         <>
           <Button sx={{ color: 'primary.contrastText' }} onClick={handleClose}>
-            Skip
+            Pomiń
           </Button>
           <Button sx={{ color: 'primary.contrastText' }} onClick={handleUpdate}>
-            Update Now
+            Aktualizuj
           </Button>
         </>
       }

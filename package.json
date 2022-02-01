@@ -100,7 +100,8 @@
     "prepare": "husky install",
     "postinstall": "husky install",
     "predeploy": "yarn build; cd ./build; rm 404.html; cp index.html 404.html",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "serve": "serve -s build"
   },
   "browserslist": {
     "production": [
