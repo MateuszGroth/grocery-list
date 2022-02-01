@@ -12,18 +12,12 @@ self.addEventListener('message', (event) => {
   }
 })
 
-const test = self.__WB_MANIFEST
-console.log(test)
-
-// @ts-expect-error: self
-self.addEventListener('install', (event) => {
-  console.log(test)
-})
+const filesToPrecache = self.__WB_MANIFEST
 
 // Use the imported Workbox libraries to implement caching,
 // routing, and other logic:
 
-precacheAndRoute(test, {
+precacheAndRoute(filesToPrecache, {
   // Ignore all URL parameters.
   ignoreURLParametersMatching: [/.*/],
 })
