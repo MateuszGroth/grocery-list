@@ -186,17 +186,20 @@ const RANDOM = [
   'Karma dla kota',
 ]
 
+const processItems = (items: Array<string>, category: CategoryKey): Array<Product> =>
+  [...new Set(items)].map((label) => ({ category, label })).sort((a, b) => a.label.localeCompare(b.label))
+
 export const PRODUCTS: Product[] = [
-  ...[...new Set(FRUITS)].map((label) => ({ category: 'fruit', label })),
-  ...[...new Set(VEGETABLES)].map((label) => ({ category: 'vegetable', label })),
-  ...[...new Set(NABIAL)].map((label) => ({ category: 'nabial', label })),
-  ...[...new Set(MEAT)].map((label) => ({ category: 'meat', label })),
-  ...[...new Set(FROZEN)].map((label) => ({ category: 'frozen', label })),
-  ...[...new Set(BATHROOM)].map((label) => ({ category: 'bathroom', label })),
-  ...[...new Set(SPICES)].map((label) => ({ category: 'spices', label })),
-  ...[...new Set(SWEETS)].map((label) => ({ category: 'sweets', label })),
-  ...[...new Set(RANDOM)].map((label) => ({ category: 'random', label })),
-].sort((a, b) => a.label.localeCompare(b.label))
+  ...processItems(FRUITS, 'fruit'),
+  ...processItems(VEGETABLES, 'vegetable'),
+  ...processItems(NABIAL, 'nabial'),
+  ...processItems(MEAT, 'meat'),
+  ...processItems(FROZEN, 'frozen'),
+  ...processItems(BATHROOM, 'bathroom'),
+  ...processItems(SPICES, 'spices'),
+  ...processItems(SWEETS, 'sweets'),
+  ...processItems(RANDOM, 'random'),
+]
 
 export const UNIT: Record<string, Unit> = {
   KG: 'kg',

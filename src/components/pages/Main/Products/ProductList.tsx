@@ -77,7 +77,7 @@ export const GroupedProductList = ({
         return categoryGroup
       })
       .filter((categoryGroup) => categoryGroup.items.length)
-      .sort((a, b) => b.items.length - a.items.length)
+    // .sort((a, b) => b.items.length - a.items.length)
   }, [items])
 
   return (
