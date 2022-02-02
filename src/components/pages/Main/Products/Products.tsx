@@ -143,6 +143,7 @@ const Products = ({ onSave }: ProductsProps) => {
   }
 
   const handleAddCommentCancel = () => {
+    setTargettedItem(null)
     setIsAddingComment(false)
   }
 
@@ -160,6 +161,7 @@ const Products = ({ onSave }: ProductsProps) => {
   }
 
   const handleEditProductCancel = () => {
+    setTargettedItem(null)
     setIsEditingProduct(false)
   }
 

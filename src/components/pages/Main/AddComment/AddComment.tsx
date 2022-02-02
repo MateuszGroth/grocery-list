@@ -19,7 +19,7 @@ const AddComment = ({ open, onCancel, onApply, currentComment }: AddCommentProps
 
   useEffect(() => {
     setComment(currentComment || '')
-  }, [currentComment])
+  }, [currentComment, open])
 
   const handleClose = () => {
     onCancel()
